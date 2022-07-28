@@ -1,0 +1,76 @@
+name: "Run Xcode Build"
+
+on:
+  workflow_call:
+    inputs:
+      matrix:
+        description: The strategy-matrix to use containing OS
+        required: false
+        type: string
+        default: >
+          {
+            "include": [
+              {
+                "os": "macos-12",
+                "xcode": "latest",
+                "platform": "macOS"
+              },
+              {
+                "os": "macos-12",
+                "xcode": "latest",
+                "platform": "watchOS"
+              },
+              {
+                "os": "macos-12",
+                "xcode": "latest",
+                "platform": "tvOS"
+              },
+              {
+                "os": "macos-12",
+                "xcode": "latest",
+                "platform": "iOS"
+              },
+              {
+                "os": "macos-12",
+                "xcode": "latest",
+                "platform": "mac-catalyst"
+              }
+            ]
+          }
+      tracked-files:
+        description: The files on which changes tracked and based on change actions are run
+        required: false
+        type: string
+        default: |
+          Sources/**/*.swift
+          Tests/**/*
+          *.xcodeproj/**/*
+
+jobs:
+  xcode-test:
+    name: Build on ${{ matrix.os }} for platform ${{ matrix.platform }} and xcode version ${{ matrix.xcode }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix: ${{ fromJSON(inputs.matrix) }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Check should proceed running steps
+      id: precondition
+      uses: SwiftyLab/ci/.github/actions/condition@main
+      with:
+        files: ${{ inputs.tracked-files }}
+
+    - name: Setup repository
+      if: steps.precondition.outputs.proceed == 'true'
+      uses: SwiftyLab/ci/.github/actions/setup@main
+      with:
+        xcode: ${{ matrix.xcode }}
+
+    - name: Build with Xcode
+      if: steps.precondition.outputs.proceed == 'true'
+      run: npm run xcodebuild -- --platform $PLATFORM
+      env:
+        PLATFORM: ${{ matrix.platform }}

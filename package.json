@@ -1,0 +1,23 @@
+{
+  "name": "ci",
+  "version": "1.0.0",
+  "summary": "Synchronization objects for modern swift concurrency.",
+  "description": "Several synchronization primitives introduced to aid in modern swift concurrency. The primitives are very similar to those used in other operating systems including mutexes, condition variables, shared/exclusive locks, and semaphores.",
+  "homepage": "https://github.com/SwiftyLab/ci",
+  "license": "MIT",
+  "author": {
+    "name": "Soumya Ranjan Mahunt",
+    "email": "soumya.mahunt@gmail.com",
+    "url": "https://twitter.com/soumya_mahunt"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SwiftyLab/ci.git"
+  },
+  "private": true,
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "conventional-changelog-conventionalcommits": "^5.0.0",
+    "semver": "^7.3.7"
+  }
+}

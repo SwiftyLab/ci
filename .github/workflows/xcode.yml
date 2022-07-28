@@ -1,0 +1,42 @@
+name: "Run Xcode Build"
+
+on:
+  workflow_call:
+    inputs:
+      matrix:
+        description: The strategy-matrix to use containing OS
+        required: true
+        type: string
+      tracked-files:
+        description: The files on which changes tracked and based on change actions are run
+        required: false
+        type: string
+        default: |
+          Sources/**/*.swift
+          Tests/**/*
+          *.xcodeproj/**/*
+
+jobs:
+  xcode-test:
+    name: Build on ${{ matrix.os }} for platform ${{ matrix.platform }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix: ${{ fromJSON(inputs.matrix) }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Check should proceed running steps
+      id: precondition
+      uses: ./.github/actions/condition
+      with:
+        files: ${{ inputs.tracked-files }}
+
+    - name: Build with Xcode
+      if: steps.precondition.outputs.proceed == 'true'
+      uses: mxcl/xcodebuild@v1
+      with:
+        platform: ${{ matrix.platform }}
+        action: build
+        configuration: debug

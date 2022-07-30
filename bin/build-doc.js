@@ -29,7 +29,7 @@ core.startGroup(`Building documentation archive`);
           if (error) {
             reject(error);
           } else {
-            resolve(stdout); 
+            resolve(stdout);
           }
         }
       )

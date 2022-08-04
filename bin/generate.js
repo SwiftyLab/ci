@@ -7,7 +7,7 @@ const plist = require('plist');
 
 const argv = require('minimist')(process.argv.slice(2));
 const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-if (argv.generate-linuxmain == true) {
+if (argv['generate-linuxmain'] == true) {
   core.startGroup(`Generating LinuxMain for swift package`);
   execSync(
     `swift test --verbose --generate-linuxmain`, {

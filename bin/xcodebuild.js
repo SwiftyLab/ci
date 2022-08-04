@@ -11,11 +11,11 @@ function destinations() {
     }
   );
   const devices = JSON.parse(out).devices;
-  let rv = {}
+  let rv = {};
   for (const opaqueIdentifier in devices) {
-    const device = (devices[opaqueIdentifier] ?? []).at(0)
+    const device = (devices[opaqueIdentifier] ?? []).at(0);
     if (!device) continue;
-    const [type, ver] = parse(opaqueIdentifier)
+    const [type, ver] = parse(opaqueIdentifier);
     if (ver && (!rv[type] || semver.lt(rv[type].ver, ver))) {
       rv[type] = { ver: ver, id: device.udid };
     }
@@ -24,24 +24,24 @@ function destinations() {
   return rv;
 
   function parse(key) {
-    const [type, ...verItems] = (key.split('.').pop() ?? '').split('-')
-    const ver = semver.coerce(verItems.join('.'))
-    return [type, ver]
+    const [type, ...verItems] = (key.split('.').pop() ?? '').split('-');
+    const ver = semver.coerce(verItems.join('.'));
+    return [type, ver];
   }
 }
 
 function getDestination(platform) {
   switch (platform) {
     case 'macOS':
-      return `-destination  platform=macOS`
+      return `-destination  platform=macOS`;
     case 'mac-catalyst':
-      return `-destination "platform=macOS,variant=Mac Catalyst"`
+      return `-destination "platform=macOS,variant=Mac Catalyst"`;
     case undefined:
     case null:
-      return `-destination  platform=macOS`
+      return `-destination  platform=macOS`;
     default:
-      const device = destinations()[platform]
-      return `-destination "id=${device.id}"`
+      const device = destinations()[platform];
+      return device ? `-destination "id=${device.id}"` : null;
   }
 }
 
@@ -56,8 +56,13 @@ core.endGroup();
 
 const argv = require('minimist')(process.argv.slice(2));
 const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-const project = `${package.name}.xcodeproj`
-const platformArg = getDestination(argv.platform)
+const project = `${package.name}.xcodeproj`;
+const platformArg = getDestination(argv.platform);
+if (!platformArg) {
+  core.info(`Skipping build due to absense of ${argv.platform} simulator`);
+  return;
+}
+
 core.startGroup(`Run xcodebuild on project ${project} for sdk`);
 execSync(
   `xcodebuild -project ${project} ${platformArg}`, {

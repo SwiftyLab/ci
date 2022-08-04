@@ -11,7 +11,7 @@ const command = `swift build ${args} --verbose \
   -emit-symbol-graph-dir \
   -Xswiftc .build`;
 
-const buildMsg = 'Building package'
+const buildMsg = 'Building package';
 core.startGroup(args ? `${buildMsg} with arguments \`${args}\`` : buildMsg);
 execSync(command, {
     stdio: ['inherit', 'inherit', 'inherit'],

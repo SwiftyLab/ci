@@ -42,13 +42,13 @@ jobs:
     - name: Check should proceed running steps
       if: steps.check_version_bump.outputs.release_type == ''
       id: precondition
-      uses: SwiftyLab/ci/.github/actions/condition@main
+      uses: SwiftyLab/ci/actions/condition@main
       with:
         files: ${{ inputs.tracked-files }}
 
     - name: Setup repository
       if: steps.precondition.outputs.proceed == 'true'
-      uses: SwiftyLab/ci/.github/actions/setup@main
+      uses: SwiftyLab/ci/actions/setup@main
 
     - name: Build package documentation
       if: steps.precondition.outputs.proceed == 'true'

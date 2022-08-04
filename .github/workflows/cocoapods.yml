@@ -11,7 +11,8 @@ on:
           {
             "include": [
               {
-                "os": "macos-latest"
+                "os": "macos-latest",
+                "xcode": "latest-stable"
               }
             ]
           }
@@ -37,13 +38,15 @@ jobs:
 
     - name: Check should proceed running steps
       id: precondition
-      uses: SwiftyLab/ci/.github/actions/condition@main
+      uses: SwiftyLab/ci/actions/condition@main
       with:
         files: ${{ inputs.tracked-files }}
 
     - name: Setup repository
       if: steps.precondition.outputs.proceed == 'true'
-      uses: SwiftyLab/ci/.github/actions/setup@main
+      uses: SwiftyLab/ci/actions/setup@main
+      with:
+        xcode: ${{ matrix.xcode }}
 
     - name: Run tests
       if: steps.precondition.outputs.proceed == 'true'

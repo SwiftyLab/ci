@@ -44,10 +44,11 @@ project.native_targets.each do |target|
   target.add_file_references([file])
 end
 project.save() if project_changed"`;
-execSync(`ruby -e ${rubyCommand}`, {
-  stdio: ['inherit', 'inherit', 'inherit'],
-  encoding: 'utf-8'
-}
+execSync(
+  `ruby -e ${rubyCommand}`, {
+    stdio: ['inherit', 'inherit', 'inherit'],
+    encoding: 'utf-8'
+  }
 );
 core.endGroup();
 

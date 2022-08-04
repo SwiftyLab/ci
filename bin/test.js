@@ -8,7 +8,7 @@ const command = `swift test ${args} --verbose \
   --enable-code-coverage \
   --enable-test-discovery`;
 
-const testMsg = 'Running package tests'
+const testMsg = 'Running package tests';
 core.startGroup(args ? `${testMsg} with arguments \`${args}\`` : testMsg);
 execSync(command, {
     stdio: ['inherit', 'inherit', 'inherit'],

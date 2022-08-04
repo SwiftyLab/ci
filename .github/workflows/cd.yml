@@ -12,6 +12,16 @@ on:
         description: New version to release
         required: false
         type: string
+      cocoapods:
+        description: Whether to publish to CocoaPods
+        required: false
+        type: boolean
+        default: true
+      swift-package:
+        description: Whether to release as Swift Package
+        required: false
+        type: boolean
+        default: true
     secrets:
       COCOAPODS_TRUNK_TOKEN:
         description: CocoaPods Trunk Token to publish release
@@ -32,28 +42,16 @@ jobs:
         ruby-version: 2.7
 
     - name: Setup repository
-      uses: SwiftyLab/ci/.github/actions/setup@main
+      uses: SwiftyLab/ci/actions/setup@main
 
     - name: Conventional Changelog Action
-      id: conventional_changelog
-      uses: TriPSs/conventional-changelog-action@v3
+      id: changelog
+      uses: SwiftyLab/ci/actions/changelog@main
       with:
-        github-token: ${{ github.token }}
-        git-message: 'chore(CHANGELOG): update for {version}'
-        git-user-name: ${{ github.actor }}
-        git-user-email: soumya.mahunt@gmail.com
-        release-count: 0
-        version-file: './package.json'
-        version-path: version
-        fallback-version: '1.0.0'
-        config-file-path: '.github/config/config.js'
-        pre-commit: '.github/config/pre_commit_hook.js'
-        pre-changelog-generation: '.github/config/pre_changelog_hook.js'
-      env:
-        VERSION: ${{ inputs.version }}
+        version: ${{ inputs.version }}
 
     - name: Build package products and documentation
-      if: steps.conventional_changelog.outputs.skipped == 'false'
+      if: steps.changelog.outputs.skipped == 'false'
       run: |
         npm run build
         npm run build-doc
@@ -61,7 +59,7 @@ jobs:
         npm run archive
 
     - name: Release GitHub Pages
-      if: steps.conventional_changelog.outputs.skipped == 'false'
+      if: steps.changelog.outputs.skipped == 'false'
       continue-on-error: true
       uses: JamesIves/github-pages-deploy-action@v4.4.0
       with:
@@ -72,17 +70,17 @@ jobs:
           commit-message: 'chore(GitHub Pages): release site for tag ${{ steps.conventional_changelog.outputs.tag }}'
 
     - name: Create GitHub Release
-      if: steps.conventional_changelog.outputs.skipped == 'false'
+      if: steps.changelog.outputs.skipped == 'false'
       continue-on-error: true
       uses: ncipollo/release-action@v1
       with:
         token: ${{ github.token }}
-        tag: ${{ steps.conventional_changelog.outputs.tag }}
-        body: ${{ steps.conventional_changelog.outputs.changelog }}
+        tag: ${{ steps.changelog.outputs.tag }}
+        body: ${{ steps.changelog.outputs.changelog }}
         artifacts: '*.zip'
 
     - name: Publish to CocoaPods trunk
-      if: steps.conventional_changelog.outputs.skipped == 'false'
+      if: inputs.cocoapods == 'true' && steps.changelog.outputs.skipped == 'false'
       continue-on-error: true
       run: |
         set -eo pipefail
@@ -91,6 +89,6 @@ jobs:
         COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
 
     - name: Publish to Swift Package Registry
-      if: steps.conventional_changelog.outputs.skipped == 'false'
+      if: inputs.swift-package == 'true' && steps.changelog.outputs.skipped == 'false'
       continue-on-error: true
       uses: twodayslate/swift-package-registry@v0.0.2

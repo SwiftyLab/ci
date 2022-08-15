@@ -1,4 +1,4 @@
-name: "Run Xcode Build"
+name: Run Xcode Build
 
 on:
   workflow_call:

@@ -1,4 +1,4 @@
-name: "Run CocoaPods Linting"
+name: Run CocoaPods Linting
 
 on:
   workflow_call:
@@ -27,7 +27,7 @@ on:
 
 jobs:
   cocoapods:
-    name: Run linting on ${{ matrix.os }}
+    name: Run linting on ${{ matrix.os }} and xcode ${{ matrix.xcode }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix: ${{ fromJSON(inputs.matrix) }}

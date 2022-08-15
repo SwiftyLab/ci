@@ -1,4 +1,4 @@
-name: "Run Tests with Swift Package"
+name: Run Tests with Swift Package
 
 on:
   workflow_call:

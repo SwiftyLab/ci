@@ -1,4 +1,4 @@
-name: "Check if release needed"
+name: Check if release needed
 
 on:
   workflow_call:

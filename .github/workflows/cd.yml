@@ -7,7 +7,7 @@ on:
         description: OS to build products on
         required: false
         type: string
-        default: macos-12
+        default: macos-latest
       version:
         description: New version to release
         required: false

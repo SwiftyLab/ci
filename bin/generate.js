@@ -19,10 +19,13 @@ if (argv['generate-linuxmain'] == true) {
 }
 
 core.startGroup(`Generating Xcode project for swift package`);
+const xcodegenCmd = `swift package --verbose generate-xcodeproj \
+--xcconfig-overrides Helpers/${package.name}.xcconfig \
+--skip-extra-files`;
+
+core.info(`Running command: ${xcodegenCmd}`);
 execSync(
-  `swift package --verbose generate-xcodeproj \
-    --xcconfig-overrides Helpers/${package.name}.xcconfig \
-    --skip-extra-files`, {
+  xcodegenCmd, {
     stdio: ['inherit', 'inherit', 'inherit'],
     encoding: 'utf-8'
   }

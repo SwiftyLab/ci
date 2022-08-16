@@ -11,27 +11,27 @@ on:
           {
             "include": [
               {
-                "os": "macos-12",
+                "os": "macos-latest",
                 "xcode": "latest-stable",
                 "platform": "macOS"
               },
               {
-                "os": "macos-12",
+                "os": "macos-latest",
                 "xcode": "latest-stable",
                 "platform": "watchOS"
               },
               {
-                "os": "macos-12",
+                "os": "macos-latest",
                 "xcode": "latest-stable",
                 "platform": "tvOS"
               },
               {
-                "os": "macos-12",
+                "os": "macos-latest",
                 "xcode": "latest-stable",
                 "platform": "iOS"
               },
               {
-                "os": "macos-12",
+                "os": "macos-latest",
                 "xcode": "latest-stable",
                 "platform": "mac-catalyst"
               }

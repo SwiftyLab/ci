@@ -64,8 +64,10 @@ if (!platformArg) {
 }
 
 core.startGroup(`Run xcodebuild on project ${project} for sdk`);
+const command = `xcodebuild -project ${project} ${platformArg}`;
+core.info(`Running command: ${command}`);
 execSync(
-  `xcodebuild -project ${project} ${platformArg}`, {
+  command, {
     stdio: ['inherit', 'inherit', 'inherit'],
     encoding: 'utf-8'
   }

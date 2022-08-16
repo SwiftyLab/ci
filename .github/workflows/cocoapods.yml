@@ -12,7 +12,23 @@ on:
             "include": [
               {
                 "os": "macos-latest",
-                "xcode": "latest-stable"
+                "xcode": "latest-stable",
+                "platform": "macos"
+              },
+              {
+                "os": "macos-latest",
+                "xcode": "latest-stable",
+                "platform": "watchos"
+              },
+              {
+                "os": "macos-latest",
+                "xcode": "latest-stable",
+                "platform": "tvos"
+              },
+              {
+                "os": "macos-latest",
+                "xcode": "latest-stable",
+                "platform": "ios"
               }
             ]
           }
@@ -27,7 +43,7 @@ on:
 
 jobs:
   cocoapods:
-    name: Run linting on ${{ matrix.os }} and xcode ${{ matrix.xcode }}
+    name: Run linting on ${{ matrix.os }} and xcode version ${{ matrix.xcode }} for ${{ matrix.platform }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix: ${{ fromJSON(inputs.matrix) }}
@@ -50,4 +66,4 @@ jobs:
 
     - name: Run tests
       if: steps.precondition.outputs.proceed == 'true'
-      run: npm run pod-lint
+      run: npm run pod-lint -- --platforms=${{ matrix.platform }}

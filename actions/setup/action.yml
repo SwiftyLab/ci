@@ -26,7 +26,7 @@ runs:
 
     - name: Setup swift
       if: runner.os != 'macOS'
-      uses: soumyamahunt/setup-swift@win-support
+      uses: swift-actions/setup-swift@v1.18.0
       with:
         swift-version: ${{ inputs.swift }}
 

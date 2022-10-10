@@ -12,22 +12,22 @@ on:
             "include": [
               {
                 "os": "macos-latest",
-                "xcode": "latest-stable",
+                "xcode": "13.4",
                 "platform": "macos"
               },
               {
                 "os": "macos-latest",
-                "xcode": "latest-stable",
+                "xcode": "13.4",
                 "platform": "watchos"
               },
               {
                 "os": "macos-latest",
-                "xcode": "latest-stable",
+                "xcode": "13.4",
                 "platform": "tvos"
               },
               {
                 "os": "macos-latest",
-                "xcode": "latest-stable",
+                "xcode": "13.4",
                 "platform": "ios"
               }
             ]

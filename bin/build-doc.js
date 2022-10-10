@@ -38,16 +38,22 @@ core.startGroup(`Building documentation archive`);
   core.endGroup();
 })();
 
+core.startGroup(`Zipping documentation archive`);
+const archive = archiver('zip');
 const doccGlobberer = readdirGlob('.', { pattern: '.build/plugins/Swift-DocC/outputs/*.doccarchive' });
 doccGlobberer.on(
   'match',
   m => {
-    core.startGroup(`Zipping documentation archive`);
     const docc = path.basename(m.relative);
-    const archiveName = [package.name, package.version].join('-');
-    const output = fs.createWriteStream(`${archiveName}.doccarchive.zip`);
-    const archive = archiver('zip');
     archive.directory(m.absolute, docc);
+  }
+);
+
+doccGlobberer.on(
+  'end',
+  () => {
+    const archiveName = [package.name, package.version].join('-');
+    const output = fs.createWriteStream(`${archiveName}-doccarchive.zip`);
     archive.pipe(output);
     archive.finalize();
     const archivePath = path.normalize(path.join(process.cwd(), output.path));

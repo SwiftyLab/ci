@@ -27,6 +27,7 @@ try {
 core.startGroup(`Building XCFramework with Carthage`);
 execSync(
   `carthage build \
+    --verbose \
     --no-skip-current \
     --use-xcframeworks \
     --platform macOS,iOS,watchOS,tvOS`, {
@@ -36,22 +37,29 @@ execSync(
 );
 core.endGroup();
 
+core.startGroup(`Zipping XCFramework`);
+const archive = archiver('zip');
+archive.file('package.json');
+archive.file('LICENSE');
+archive.directory('Helpers', '.');
+
 const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 const xcframeworkGlobberer = readdirGlob('.', { pattern: 'Carthage/Build/*.xcframework' });
 xcframeworkGlobberer.on(
   'match',
   m => {
-    core.startGroup(`Zipping XCFramework`);
     const xcframework = path.basename(m.relative);
     const name = path.basename(xcframework, path.extname(xcframework));
-    const archiveName = [name, package.version].join('-');
-    const output = fs.createWriteStream(`${archiveName}.xcframework.zip`);
-    const archive = archiver('zip');
     archive.directory(m.absolute, xcframework);
     archive.directory(`Sources/${name}/${name}.docc`, `${name}.docc`);
-    archive.file('package.json');
-    archive.file('LICENSE');
-    archive.file(`Helpers/${name}.podspec`, { name: `${name}.podspec` });
+  }
+);
+
+xcframeworkGlobberer.on(
+  'end',
+  () => {
+    const archiveName = [package.name, package.version].join('-');
+    const output = fs.createWriteStream(`${archiveName}.xcframework.zip`);
     archive.pipe(output);
     archive.finalize();
     const archivePath = path.normalize(path.join(process.cwd(), output.path));

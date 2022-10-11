@@ -1,42 +1,53 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const { execSync } = require('child_process');
+const readdirGlob = require('readdir-glob');
 const core = require('@actions/core');
 
-const target = require('minimist')(process.argv.slice(2))._.at(0);
-const hostingDocGenCommandFormat = (basePath, outPath) =>
- `swift package --verbose \
-   --allow-writing-to-directory .docc-build \
-   generate-documentation \
-   --target ${target} \
-   --disable-indexing \
-   --transform-for-static-hosting \
-   --hosting-base-path ${basePath} \
-   --output-path ${outPath}`;
-
+const targets = require('minimist')(process.argv.slice(2))._;
 const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-const hostingDocGenCommand = hostingDocGenCommandFormat(
-  `${package.name}`,
-  '.docc-build'
-);
+
+const generateHostingDoc = (basePath, outPath) => {
+  const hostingDocGenCommand = (target) =>
+   `swift package --verbose \
+     generate-documentation \
+     --target ${target} \
+     --disable-indexing \
+     --transform-for-static-hosting \
+     --hosting-base-path ${basePath}`;
+     
+  targets.forEach((target) => {
+    core.info(`Generating Documentation for target ${target}`);
+    execSync(hostingDocGenCommand(target), {
+        stdio: ['inherit', 'inherit', 'inherit'],
+        encoding: 'utf-8'
+      }
+    );
+  });
+
+  const doccGlobberer = readdirGlob('.', { pattern: '.build/plugins/Swift-DocC/outputs/*.doccarchive' });
+  (async () => {
+    await new Promise((resolve, reject) => {
+      doccGlobberer.on(
+        'match',
+        m => {
+          fs.cpSync(m.absolute, outPath, { recursive: true });
+        }
+      );
+
+      doccGlobberer.on('end', () => { resolve(); });
+      doccGlobberer.on('error', err => { core.error(err); reject(err); });
+    });
+  })();
+};
+
+fs.rmSync('.docc-build', { recursive: true, force: true });
+fs.mkdirSync('.docc-build', { recursive: true });
 
 core.startGroup(`Generating Documentation for Hosting Online`);
-execSync(hostingDocGenCommand, {
-    stdio: ['inherit', 'inherit', 'inherit'],
-    encoding: 'utf-8'
-  }
-);
+generateHostingDoc(`${package.name}`, '.docc-build');
 core.endGroup();
 
-const hostingVersionedDocGenCommand = hostingDocGenCommandFormat(
-  `${package.name}/${package.version}`,
-  `.docc-build/${package.version}`
-);
-
 core.startGroup(`Generating ${package.version} Specific Documentation for Hosting Online`);
-execSync(hostingVersionedDocGenCommand, {
-    stdio: ['inherit', 'inherit', 'inherit'],
-    encoding: 'utf-8'
-  }
-);
+generateHostingDoc(`${package.name}/${package.version}`, `.docc-build/${package.version}`);
 core.endGroup();

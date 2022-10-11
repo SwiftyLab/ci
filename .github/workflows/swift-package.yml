@@ -19,7 +19,7 @@ on:
         description: The swift version for codecov upload
         required: false
         type: string
-        default: '5.6'
+        default: '5.7'
       codecov-os:
         description: The runner OS for codecov upload
         required: false

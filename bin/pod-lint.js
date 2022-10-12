@@ -21,7 +21,7 @@ specGlobberer.on(
       --allow-warnings \
       --verbose \
       --include-podspecs=\\{${podspecs.join(',')}\\}`;
-    
+
     core.startGroup(`Linting podspec`);
     core.info(`Running command: ${command}`);
     execSync(command, {

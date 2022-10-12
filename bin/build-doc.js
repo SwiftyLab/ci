@@ -36,30 +36,30 @@ core.startGroup(`Building documentation archive`);
    }))
   );
   core.endGroup();
+
+  core.startGroup(`Zipping documentation archive`);
+  const archive = archiver('zip');
+  const doccGlobberer = readdirGlob('.', { pattern: '.build/plugins/Swift-DocC/outputs/*.doccarchive' });
+  doccGlobberer.on(
+    'match',
+    m => {
+      const docc = path.basename(m.relative);
+      archive.directory(m.absolute, docc);
+    }
+  );
+
+  doccGlobberer.on(
+    'end',
+    () => {
+      const archiveName = [package.name, package.version].join('-');
+      const output = fs.createWriteStream(`${archiveName}-doccarchive.zip`);
+      archive.pipe(output);
+      archive.finalize();
+      const archivePath = path.normalize(path.join(process.cwd(), output.path));
+      core.info(`Created archive '${archivePath}'`);
+      core.endGroup();
+    }
+  );
+
+  doccGlobberer.on('error', err => { core.error(err); });
 })();
-
-core.startGroup(`Zipping documentation archive`);
-const archive = archiver('zip');
-const doccGlobberer = readdirGlob('.', { pattern: '.build/plugins/Swift-DocC/outputs/*.doccarchive' });
-doccGlobberer.on(
-  'match',
-  m => {
-    const docc = path.basename(m.relative);
-    archive.directory(m.absolute, docc);
-  }
-);
-
-doccGlobberer.on(
-  'end',
-  () => {
-    const archiveName = [package.name, package.version].join('-');
-    const output = fs.createWriteStream(`${archiveName}-doccarchive.zip`);
-    archive.pipe(output);
-    archive.finalize();
-    const archivePath = path.normalize(path.join(process.cwd(), output.path));
-    core.info(`Created archive '${archivePath}'`);
-    core.endGroup();
-  }
-);
-
-doccGlobberer.on('error', err => { core.error(err); });

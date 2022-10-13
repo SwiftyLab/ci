@@ -11,11 +11,10 @@ exports.preCommit = (props) => {
   );
   core.endGroup();
 
-  // Disable generation temporarily to not have hang
-  // execSync(
-  //   'npm run generate', {
-  //     stdio: ['inherit', 'inherit', 'inherit'],
-  //     encoding: 'utf-8'
-  //   }
-  // );
+  execSync(
+    'npm run generate', {
+      stdio: ['inherit', 'inherit', 'inherit'],
+      encoding: 'utf-8'
+    }
+  );
 };

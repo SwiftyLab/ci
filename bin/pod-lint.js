@@ -2,7 +2,7 @@
 const core = require('@actions/core');
 const concurrently = require('concurrently');
 
-const defaultPlatforms = ['macos', 'ios', 'tvos', 'watchos'];
+const defaultPlatforms = ['macos', 'ios', 'tvos', /* 'watchos' */];
 const passedPlatforms = require('minimist')(process.argv.slice(2))._;
 const platforms = passedPlatforms?.length ? passedPlatforms : defaultPlatforms;
 const inputs = platforms

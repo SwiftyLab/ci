@@ -3,6 +3,7 @@ const fs = require('fs');
 const { execSync } = require('child_process');
 const semver = require('semver');
 const core = require('@actions/core');
+const concurrently = require('concurrently');
 
 function destinations() {
   const out = execSync(
@@ -54,22 +55,31 @@ execSync(
 );
 core.endGroup();
 
-const argv = require('minimist')(process.argv.slice(2));
+const defaultPlatforms = ['macOS', 'iOS', 'mac-catalyst', 'tvOS', 'watchOS'];
+const passedPlatforms = require('minimist')(process.argv.slice(2))._;
+const platforms = passedPlatforms?.length ? passedPlatforms : defaultPlatforms;
 const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 const project = `${package.name}.xcodeproj`;
-const platformArg = getDestination(argv.platform);
-if (!platformArg) {
-  core.info(`Skipping build due to absense of ${argv.platform} simulator`);
-  return;
-}
-
-core.startGroup(`Run xcodebuild on project ${project} for sdk`);
-const command = `xcodebuild -project ${project} ${platformArg}`;
-core.info(`Running command: ${command}`);
-execSync(
-  command, {
-    stdio: ['inherit', 'inherit', 'inherit'],
-    encoding: 'utf-8'
+const inputs = platforms
+.map((platform) => {
+  const destArg = getDestination(platform);
+  if (!destArg) {
+    core.info(`Skipping build for ${platform} simulator due to absense`);
+    return nil;
   }
-);
-core.endGroup();
+  const input = {
+    name: platform,
+    command: `xcodebuild -project ${project} ${destArg}`,
+  };
+  return input;
+}).filter((input) => input);
+
+(async () => {
+  core.startGroup(`Run xcodebuild on project ${project}`);
+  try {
+    await concurrently(inputs, { prefix: 'name', group: true }).result;
+  } catch (error) {
+    core.error(error);
+  }
+  core.endGroup();
+})();

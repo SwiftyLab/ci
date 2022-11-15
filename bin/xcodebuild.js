@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const fs = require('fs');
+const path = require('path');
 const { execSync } = require('child_process');
 const semver = require('semver');
 const core = require('@actions/core');
@@ -56,10 +57,12 @@ execSync(
 core.endGroup();
 
 const defaultPlatforms = ['macOS', 'iOS', 'mac-catalyst', 'tvOS', 'watchOS'];
-const passedPlatforms = require('minimist')(process.argv.slice(2))._;
+const argv = require('minimist')(process.argv.slice(2));
+const passedPlatforms = argv._;
 const platforms = passedPlatforms?.length ? passedPlatforms : defaultPlatforms;
 const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 const project = `${package.name}.xcodeproj`;
+const scheme = argv.scheme ?? `${package.name}-Package`;
 const inputs = platforms
 .map((platform) => {
   const destArg = getDestination(platform);
@@ -67,9 +70,10 @@ const inputs = platforms
     core.info(`Skipping build for ${platform} simulator due to absense`);
     return nil;
   }
+  const derivedDataPath = path.join('build', 'xcodebuild', platform, process.arch);
   const input = {
     name: platform,
-    command: `xcodebuild -project ${project} ${destArg}`,
+    command: `xcodebuild -project "${project}" -scheme "${scheme}" -derivedDataPath "${derivedDataPath}" ${destArg}`,
   };
   return input;
 }).filter((input) => input);

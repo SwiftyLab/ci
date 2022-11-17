@@ -70,7 +70,7 @@ const inputs = platforms
     core.info(`Skipping build for ${platform} simulator due to absense`);
     return nil;
   }
-  const derivedDataPath = path.join('build', 'xcodebuild', platform, process.arch);
+  const derivedDataPath = path.join('build', 'xcodebuild', scheme, platform, process.arch);
   const input = {
     name: platform,
     command: `xcodebuild -project "${project}" -scheme "${scheme}" -derivedDataPath "${derivedDataPath}" ${destArg}`,

@@ -15,7 +15,7 @@ specGlobberer.on(
 specGlobberer.on(
   'end',
   () => {
-    const command = (platform) => `pod lib lint --verbose --no-clean --allow-warnings
+    const command = (platform) => `pod lib lint --verbose --no-clean --allow-warnings \
       --platforms=${platform} \
       --include-podspecs=\\{${podspecs.join(',')}\\}`;
 

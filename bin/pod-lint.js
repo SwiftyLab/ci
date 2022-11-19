@@ -39,15 +39,6 @@ specGlobberer.on(
       }
       core.endGroup();
     })();
-
-    core.startGroup(`Linting podspec`);
-    core.info(`Running command: ${command}`);
-    execSync(command, {
-        stdio: ['inherit', 'inherit', 'inherit'],
-        encoding: 'utf-8'
-      }
-    );
-    core.endGroup();
   }
 );
 

@@ -49,7 +49,7 @@ function getDestination(platform) {
 
 core.startGroup(`Installing dependencies for swift package`);
 execSync(
-  `swift package resolve --verbose`, {
+  `swift package resolve`, {
     stdio: ['inherit', 'inherit', 'inherit'],
     encoding: 'utf-8'
   }

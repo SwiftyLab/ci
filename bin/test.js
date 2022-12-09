@@ -12,7 +12,8 @@ const testMsg = 'Running package tests';
 core.startGroup(args ? `${testMsg} with arguments \`${args}\`` : testMsg);
 execSync(command, {
     stdio: ['inherit', 'inherit', 'inherit'],
-    encoding: 'utf-8'
+    encoding: 'utf-8',
+    timeout: 3.6e6,
   }
 );
 core.endGroup();

@@ -3,35 +3,16 @@ name: Run CocoaPods Linting
 on:
   workflow_call:
     inputs:
-      matrix:
-        description: The strategy-matrix to use containing OS
+      os:
+        description: MacOS runner to run Xcode build on
         required: false
         type: string
-        default: >
-          {
-            "include": [
-              {
-                "os": "macos-latest",
-                "xcode": "13.4",
-                "platform": "macos"
-              },
-              {
-                "os": "macos-latest",
-                "xcode": "13.4",
-                "platform": "watchos"
-              },
-              {
-                "os": "macos-latest",
-                "xcode": "13.4",
-                "platform": "tvos"
-              },
-              {
-                "os": "macos-latest",
-                "xcode": "13.4",
-                "platform": "ios"
-              }
-            ]
-          }
+        default: macos-latest
+      xcode:
+        description: Xcode version to use
+        required: false
+        type: string
+        default: latest-stable
       tracked-files:
         description: The files on which changes tracked and based on change actions are run
         required: false
@@ -43,10 +24,8 @@ on:
 
 jobs:
   cocoapods:
-    name: Run linting on ${{ matrix.os }} and xcode version ${{ matrix.xcode }} for ${{ matrix.platform }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix: ${{ fromJSON(inputs.matrix) }}
+    name: Run linting on ${{ inputs.os }} with xcode version ${{ inputs.xcode }}
+    runs-on: ${{ inputs.os }}
 
     steps:
     - name: Checkout repository
@@ -62,8 +41,8 @@ jobs:
       if: steps.precondition.outputs.proceed == 'true'
       uses: SwiftyLab/ci/actions/setup@main
       with:
-        xcode: ${{ matrix.xcode }}
+        xcode: ${{ inputs.xcode }}
 
     - name: Run tests
       if: steps.precondition.outputs.proceed == 'true'
-      run: npm run pod-lint -- --platforms=${{ matrix.platform }}
+      run: npm run pod-lint

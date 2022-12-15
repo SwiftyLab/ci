@@ -3,40 +3,16 @@ name: Run Xcode Build
 on:
   workflow_call:
     inputs:
-      matrix:
-        description: The strategy-matrix to use containing OS
+      os:
+        description: MacOS runner to run Xcode build on
         required: false
         type: string
-        default: >
-          {
-            "include": [
-              {
-                "os": "macos-latest",
-                "xcode": "latest-stable",
-                "platform": "macOS"
-              },
-              {
-                "os": "macos-latest",
-                "xcode": "latest-stable",
-                "platform": "watchOS"
-              },
-              {
-                "os": "macos-latest",
-                "xcode": "latest-stable",
-                "platform": "tvOS"
-              },
-              {
-                "os": "macos-latest",
-                "xcode": "latest-stable",
-                "platform": "iOS"
-              },
-              {
-                "os": "macos-latest",
-                "xcode": "latest-stable",
-                "platform": "mac-catalyst"
-              }
-            ]
-          }
+        default: macos-latest
+      xcode:
+        description: Xcode version to use
+        required: false
+        type: string
+        default: latest-stable
       tracked-files:
         description: The files on which changes tracked and based on change actions are run
         required: false
@@ -48,10 +24,8 @@ on:
 
 jobs:
   xcode-test:
-    name: Build on ${{ matrix.os }} for platform ${{ matrix.platform }} and xcode version ${{ matrix.xcode }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix: ${{ fromJSON(inputs.matrix) }}
+    name: Build on ${{ inputs.os }} with xcode version ${{ inputs.xcode }}
+    runs-on: ${{ inputs.os }}
 
     steps:
     - name: Checkout repository
@@ -67,10 +41,8 @@ jobs:
       if: steps.precondition.outputs.proceed == 'true'
       uses: SwiftyLab/ci/actions/setup@main
       with:
-        xcode: ${{ matrix.xcode }}
+        xcode: ${{ inputs.xcode }}
 
     - name: Build with Xcode
       if: steps.precondition.outputs.proceed == 'true'
-      run: npm run xcodebuild -- --platform $PLATFORM
-      env:
-        PLATFORM: ${{ matrix.platform }}
+      run: npm run xcodebuild

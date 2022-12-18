@@ -7,7 +7,7 @@ on:
         description: OS to build products on
         required: false
         type: string
-        default: macos-latest
+        default: macos-12
       version:
         description: New version to release
         required: false
@@ -28,8 +28,33 @@ on:
         required: true
 
 jobs:
-  cd:
+  changelog:
+    name: Generate release changelogs
+    runs-on: ubuntu-latest
+    outputs:
+      changelog: ${{ steps.changelog.outputs.changelog }}
+      clean_changelog: ${{ steps.changelog.outputs.clean_changelog }}
+      version: ${{ steps.changelog.outputs.version }}
+      tag: ${{ steps.changelog.outputs.tag }}
+      skipped: ${{ steps.changelog.outputs.skipped }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup repository
+      uses: SwiftyLab/ci/actions/setup@main
+
+    - name: Conventional Changelog Action
+      id: changelog
+      uses: SwiftyLab/ci/actions/changelog@main
+      with:
+        version: ${{ inputs.version }}
+
+  publish:
     name: Build and Publish
+    if: needs.changelog.outputs.skipped == 'false'
+    needs: changelog
     runs-on: ${{ inputs.os }}
 
     steps:
@@ -44,14 +69,7 @@ jobs:
     - name: Setup repository
       uses: SwiftyLab/ci/actions/setup@main
 
-    - name: Conventional Changelog Action
-      id: changelog
-      uses: SwiftyLab/ci/actions/changelog@main
-      with:
-        version: ${{ inputs.version }}
-
     - name: Build package products and documentation
-      if: steps.changelog.outputs.skipped == 'false'
       run: |
         npm run build
         npm run build-doc
@@ -59,7 +77,6 @@ jobs:
         npm run archive
 
     - name: Release GitHub Pages
-      if: steps.changelog.outputs.skipped == 'false'
       continue-on-error: true
       uses: JamesIves/github-pages-deploy-action@v4.4.1
       with:
@@ -67,20 +84,19 @@ jobs:
           folder: .docc-build
           target-folder: docs
           clean: false
-          commit-message: 'chore(GitHub Pages): release site for tag ${{ steps.conventional_changelog.outputs.tag }}'
+          commit-message: 'chore(GitHub Pages): release site for tag ${{ needs.changelog.outputs.tag }}'
 
     - name: Create GitHub Release
-      if: steps.changelog.outputs.skipped == 'false'
       continue-on-error: true
       uses: ncipollo/release-action@v1
       with:
         token: ${{ github.token }}
-        tag: ${{ steps.changelog.outputs.tag }}
-        body: ${{ steps.changelog.outputs.changelog }}
+        tag: ${{ needs.changelog.outputs.tag }}
+        body: ${{ needs.changelog.outputs.changelog }}
         artifacts: '*.zip'
 
     - name: Publish to CocoaPods trunk
-      if: inputs.cocoapods == 'true' && steps.changelog.outputs.skipped == 'false'
+      if: inputs.cocoapods == 'true'
       continue-on-error: true
       run: |
         set -eo pipefail
@@ -89,6 +105,6 @@ jobs:
         COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
 
     - name: Publish to Swift Package Registry
-      if: inputs.swift-package == 'true' && steps.changelog.outputs.skipped == 'false'
+      if: inputs.swift-package == 'true'
       continue-on-error: true
       uses: twodayslate/swift-package-registry@v0.0.2

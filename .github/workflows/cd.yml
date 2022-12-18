@@ -12,16 +12,6 @@ on:
         description: New version to release
         required: false
         type: string
-      cocoapods:
-        description: Whether to publish to CocoaPods
-        required: false
-        type: boolean
-        default: true
-      swift-package:
-        description: Whether to release as Swift Package
-        required: false
-        type: boolean
-        default: true
     secrets:
       COCOAPODS_TRUNK_TOKEN:
         description: CocoaPods Trunk Token to publish release
@@ -96,7 +86,6 @@ jobs:
         artifacts: '*.zip'
 
     - name: Publish to CocoaPods trunk
-      if: inputs.cocoapods == 'true'
       continue-on-error: true
       run: |
         set -eo pipefail
@@ -105,6 +94,5 @@ jobs:
         COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
 
     - name: Publish to Swift Package Registry
-      if: inputs.swift-package == 'true'
       continue-on-error: true
       uses: twodayslate/swift-package-registry@v0.0.2

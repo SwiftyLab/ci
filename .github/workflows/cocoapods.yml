@@ -13,6 +13,11 @@ on:
         required: false
         type: string
         default: latest-stable
+      platforms:
+        description: Space separated platforms list
+        required: false
+        type: string
+        default: ''
       tracked-files:
         description: The files on which changes tracked and based on change actions are run
         required: false
@@ -45,4 +50,4 @@ jobs:
 
     - name: Run tests
       if: steps.precondition.outputs.proceed == 'true'
-      run: npm run pod-lint
+      run: npm run pod-lint -- ${{ inputs.platforms }}

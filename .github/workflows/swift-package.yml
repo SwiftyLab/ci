@@ -34,6 +34,9 @@ jobs:
   swift-package:
     name: Run tests on ${{ matrix.os }} with swift version ${{ matrix.swift }}
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
     strategy:
       matrix: ${{ fromJSON(inputs.matrix) }}
 

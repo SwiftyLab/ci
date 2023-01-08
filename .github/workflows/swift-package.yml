@@ -15,16 +15,6 @@ on:
           Sources/**/*.swift
           Tests/**/*
           Package*.swift
-      codecov-swift:
-        description: The swift version for codecov upload
-        required: false
-        type: string
-        default: '5.7'
-      codecov-os:
-        description: The runner OS for codecov upload
-        required: false
-        type: string
-        default: ubuntu-latest
     secrets:
       CODECOV_TOKEN:
         description: Codecov token to upload code coverage
@@ -64,8 +54,6 @@ jobs:
     - name: Swift Coverage Report
       if: |
         steps.precondition.outputs.proceed == 'true' &&
-        matrix.swift == inputs.codecov-swift &&
-        matrix.os == inputs.codecov-os &&
         (github.event_name == 'push' || github.event_name == 'pull_request')
       continue-on-error: true
       uses: maxep/spm-lcov-action@0.3.1
@@ -76,8 +64,6 @@ jobs:
     - name: Codecov upload
       if: |
         steps.precondition.outputs.proceed == 'true' &&
-        matrix.swift == inputs.codecov-swift &&
-        matrix.os == inputs.codecov-os &&
         (github.event_name == 'push' || github.event_name == 'pull_request')
       continue-on-error: true
       uses: codecov/codecov-action@v3.1.1

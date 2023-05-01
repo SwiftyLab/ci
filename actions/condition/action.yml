@@ -19,6 +19,7 @@ runs:
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
+        path: '.'
 
     - name: Get last run
       id: last_status

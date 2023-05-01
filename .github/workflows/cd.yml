@@ -33,11 +33,11 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Setup repository
-      uses: SwiftyLab/ci/actions/setup@main
+      uses: SwiftyLab/ci/actions/setup@swift-codeql
 
     - name: Conventional Changelog Action
       id: changelog
-      uses: SwiftyLab/ci/actions/changelog@main
+      uses: SwiftyLab/ci/actions/changelog@swift-codeql
       with:
         version: ${{ inputs.version }}
 
@@ -59,7 +59,7 @@ jobs:
         ruby-version: 2.7
 
     - name: Setup repository
-      uses: SwiftyLab/ci/actions/setup@main
+      uses: SwiftyLab/ci/actions/setup@swift-codeql
 
     - name: Build package products and documentation
       run: |

@@ -58,7 +58,7 @@ jobs:
 
     - name: Build package products
       run: |
-        npm run build
+        swift build --build-tests
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2

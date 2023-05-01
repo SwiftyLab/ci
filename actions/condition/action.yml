@@ -11,10 +11,15 @@ inputs:
 outputs:
   proceed:
     description: Should proceed running steps
-    value: ${{ steps.changed_files.outputs.any_changed == 'true' || !steps.last_status.outputs.result || (steps.last_status.outputs.result && fromJSON(steps.last_status.outputs.result).passed != 'true') }}
+    value: ${{ steps.changed_files.outputs.any_changed == 'true' || steps.last_status.outputs.result != 'true' || (steps.last_status.outputs.result == 'true' && fromJSON(steps.last_status.outputs.result).passed != 'true') }}
 runs:
   using: composite
   steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
     - name: Get last run
       id: last_status
       uses: actions/github-script@v6.1.0

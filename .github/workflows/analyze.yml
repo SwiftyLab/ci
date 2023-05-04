@@ -9,14 +9,11 @@ on:
           along with optional Swift and Xcode versions
         required: true
         type: string
-      tracked-files:
-        description: The files on which changes tracked and based on change actions are run
+      source-root:
+        description: Path of the root source code directory, relative to $GITHUB_WORKSPACE.
         required: false
         type: string
-        default: |
-          Sources/**/*.swift
-          Tests/**/*
-          Package*.swift
+        default: '.'
 
 concurrency:
   group: scan-${{ github.ref }}
@@ -35,13 +32,13 @@ jobs:
       security-events: write
     strategy:
       matrix: ${{ fromJSON(inputs.matrix) }}
+    defaults:
+      run:
+        working-directory: ${{ inputs.source-root }}
 
     steps:
-    - name: Check should proceed running steps
-      id: precondition
-      uses: SwiftyLab/ci/actions/condition@swift-codeql
-      with:
-        files: ${{ inputs.tracked-files }}
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
     - name: Setup repository
       if: steps.precondition.outputs.proceed == 'true'
@@ -55,10 +52,10 @@ jobs:
       uses: github/codeql-action/init@v2
       with:
         languages: ${{ matrix.language }}
+        source-root: ${{ inputs.source-root }}
 
     - name: Build package products
-      run: |
-        swift build --build-tests
+      run: swift build --build-tests
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2

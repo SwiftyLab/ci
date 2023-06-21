@@ -15,6 +15,12 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        path: '.'
+
     - name: Get last run
       id: last_status
       uses: actions/github-script@v6.1.0
@@ -23,13 +29,14 @@ runs:
       with:
         result-encoding: json
         script: |
-          const { GITHUB_REF_NAME, WORKFLOW } = process.env;
-          core.startGroup(`Checking last status for workflow \`${WORKFLOW}\` for branch \`${GITHUB_REF_NAME}\``);
+          const { GITHUB_HEAD_REF, GITHUB_REF_NAME, WORKFLOW } = process.env;
+          const branch = GITHUB_HEAD_REF ?? GITHUB_REF_NAME;
+          core.startGroup(`Checking last status for workflow \`${WORKFLOW}\` for branch \`${branch}\``);
           const result = await github.rest.actions.listWorkflowRuns({
             owner: context.repo.owner,
             repo: context.repo.repo,
             workflow_id: WORKFLOW,
-            branch: GITHUB_REF_NAME,
+            branch: branch,
             per_page: 2,
             page: 1
           });

@@ -3,10 +3,17 @@ name: Analyze
 on:
   workflow_call:
     inputs:
-      codeql:
-        description: The strategy-matrix to use runner OS and languages for CodeQL Analysis
+      matrix:
+        description: |
+          The strategy-matrix to use containing runner OS and languages for CodeQL analysis
+          along with optional Swift and Xcode versions
         required: true
         type: string
+      source-root:
+        description: Path of the root source code directory, relative to $GITHUB_WORKSPACE.
+        required: false
+        type: string
+        default: '.'
 
 concurrency:
   group: scan-${{ github.ref }}
@@ -14,24 +21,39 @@ concurrency:
 
 jobs:
   codeql:
-    name: CodeQL Analysis for language ${{ matrix.language }}
-    runs-on: ubuntu-latest
+    name: CodeQL Analysis on ${{ matrix.os }} for language ${{ matrix.language }}
+    runs-on: ${{ matrix.os }}
     permissions:
       actions: read
       contents: read
       security-events: write
     strategy:
-      matrix: ${{ fromJSON(inputs.codeql) }}
+      matrix: ${{ fromJSON(inputs.matrix) }}
+    defaults:
+      run:
+        working-directory: ${{ inputs.source-root }}
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+
+    - name: Setup repository
+      uses: SwiftyLab/ci/actions/setup@main
+      with:
+        swift: ${{ matrix.swift }}
+        xcode: ${{ matrix.xcode }}
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
         languages: ${{ matrix.language }}
+        source-root: ${{ inputs.source-root }}
+
+    - name: Build package products
+      run: swift build --build-tests
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
+      with:
+        category: "/language:${{matrix.language}}"

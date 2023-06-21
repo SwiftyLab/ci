@@ -63,7 +63,7 @@ jobs:
 
     - name: Build package products and documentation
       run: |
-        npm run build
+        swift build -Xswiftc -emit-symbol-graph -Xswiftc -emit-symbol-graph-dir -Xswiftc .build
         npm run build-doc
         npm run serve-doc
         npm run archive

@@ -28,10 +28,14 @@ jobs:
       release: ${{ steps.check_version_bump.outputs.release_type != '' }}
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+    - name: Check should proceed running steps
+      id: precondition
+      uses: SwiftyLab/ci/actions/condition@main
+      with:
+        files: ${{ inputs.tracked-files }}
 
     - name: Check version bump
+      if: steps.precondition.outputs.proceed == 'true'
       id: check_version_bump
       uses: mathieudutour/github-tag-action@v6.1
       with:
@@ -39,25 +43,18 @@ jobs:
         default_bump: false
         dry_run: true
 
-    - name: Check should proceed running steps
-      if: steps.check_version_bump.outputs.release_type == ''
-      id: precondition
-      uses: SwiftyLab/ci/actions/condition@main
-      with:
-        files: ${{ inputs.tracked-files }}
-
     - name: Setup repository
-      if: steps.precondition.outputs.proceed == 'true'
+      if: steps.precondition.outputs.proceed == 'true' && steps.check_version_bump.outputs.release_type == ''
       uses: SwiftyLab/ci/actions/setup@main
 
     - name: Build package documentation
-      if: steps.precondition.outputs.proceed == 'true'
+      if: steps.precondition.outputs.proceed == 'true' && steps.check_version_bump.outputs.release_type == ''
       run: |
-        npm run build
+        swift build -Xswiftc -emit-symbol-graph -Xswiftc -emit-symbol-graph-dir -Xswiftc .build
         npm run serve-doc
 
     - name: Update GitHub Pages
-      if: steps.precondition.outputs.proceed == 'true'
+      if: steps.precondition.outputs.proceed == 'true' && steps.check_version_bump.outputs.release_type == ''
       uses: JamesIves/github-pages-deploy-action@v4.4.2
       with:
           branch: gh-pages

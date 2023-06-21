@@ -33,13 +33,13 @@ jobs:
     steps:
     - name: Check should proceed running steps
       id: precondition
-      uses: SwiftyLab/ci/actions/condition@swift-codeql
+      uses: SwiftyLab/ci/actions/condition@main
       with:
         files: ${{ inputs.tracked-files }}
 
     - name: Setup repository
       if: steps.precondition.outputs.proceed == 'true'
-      uses: SwiftyLab/ci/actions/setup@swift-codeql
+      uses: SwiftyLab/ci/actions/setup@main
       with:
         swift: ${{ matrix.swift }}
         xcode: ${{ matrix.xcode }}

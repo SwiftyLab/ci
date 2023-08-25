@@ -4,7 +4,7 @@ inputs:
   swift:
     description: Swift version to use
     required: false
-    default: '5.7'
+    default: latest
   xcode:
     description: Xcode version to use
     required: false
@@ -25,8 +25,8 @@ runs:
         version: latest
 
     - name: Setup swift
-      if: runner.os != 'macOS'
-      uses: swift-actions/setup-swift@v1.20.0
+      if: inputs.swift != '' && inputs.swift != 'latest'
+      uses: SwiftyLab/setup-swift@latest
       with:
         swift-version: ${{ inputs.swift }}
 

@@ -63,6 +63,7 @@ const platforms = passedPlatforms?.length ? passedPlatforms : defaultPlatforms;
 const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 const project = `${package.name}.xcodeproj`;
 const scheme = argv.scheme ?? `${package.name}-Package`;
+const toolchainArg = pocess.env.TOOLCHAINS ? `-toolchain ${pocess.env.TOOLCHAINS}` : ''
 const inputs = platforms
 .map((platform) => {
   const destArg = getDestination(platform);
@@ -73,7 +74,7 @@ const inputs = platforms
   const derivedDataPath = path.join('build', 'xcodebuild', scheme, platform, process.arch);
   const input = {
     name: platform,
-    command: `xcodebuild -project "${project}" -scheme "${scheme}" -derivedDataPath "${derivedDataPath}" ${destArg}`,
+    command: `xcodebuild ${toolchainArg} -project "${project}" -scheme "${scheme}" -derivedDataPath "${derivedDataPath}" ${destArg}`,
   };
   return input;
 }).filter((input) => input);

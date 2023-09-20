@@ -25,7 +25,7 @@ runs:
         version: latest
 
     - name: Setup swift
-      if: inputs.swift != '' && inputs.swift != 'latest'
+      if: inputs.swift != '' && (inputs.swift != 'latest' || runner.os != 'macOS')
       uses: SwiftyLab/setup-swift@latest
       with:
         swift-version: ${{ inputs.swift }}

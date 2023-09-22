@@ -7,6 +7,7 @@ const target = require('minimist')(process.argv.slice(2))._.at(0);
 const child = exec(
   `swift package --verbose \
     --disable-sandbox preview-documentation \
+    --include-extended-types \
     --target ${target} \
     --fallback-display-name ${target} \
     --fallback-bundle-identifier com.SwiftyLab.${target} \

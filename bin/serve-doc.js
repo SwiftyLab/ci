@@ -11,6 +11,7 @@ async function generateHostingDoc(basePath, outPath) {
   const hostingDocGenCommand = (target) =>
    `swift package --verbose \
      generate-documentation \
+     --include-extended-types \
      --target ${target} \
      --disable-indexing \
      --transform-for-static-hosting \

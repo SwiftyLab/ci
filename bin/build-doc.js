@@ -10,6 +10,7 @@ const core = require('@actions/core');
 const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 const products = require('minimist')(process.argv.slice(2))._;
 const doccarchiveCommand = (product) => `swift package --verbose generate-documentation \
+  --include-extended-types \
   --target ${product} \
   --fallback-display-name ${product} \
   --fallback-bundle-identifier com.SwiftyLab.${product} \

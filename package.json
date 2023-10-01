@@ -19,7 +19,7 @@
     "bin": "./bin"
   },
   "dependencies": {
-    "@actions/core": "^1.10.0",
+    "@actions/core": "^1.10.1",
     "archiver": "^6.0.1",
     "concurrently": "^8.2.1",
     "conventional-changelog-conventionalcommits": "^7.0.2",

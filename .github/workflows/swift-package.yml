@@ -46,7 +46,7 @@ jobs:
 
     - name: Run tests
       if: steps.precondition.outputs.proceed == 'true'
-      run: swift test --parallel --enable-code-coverage --enable-test-discovery
+      run: npm run test
 
     - name: Swift Coverage Report
       if: |

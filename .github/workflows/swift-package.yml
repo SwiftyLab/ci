@@ -18,7 +18,6 @@ on:
     secrets:
       CODECOV_TOKEN:
         description: Codecov token to upload code coverage
-        required: true
 
 jobs:
   swift-package:
@@ -65,5 +64,5 @@ jobs:
       continue-on-error: true
       uses: codecov/codecov-action@v3.1.4
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+        token: ${{ secrets.CODECOV_TOKEN || vars.CODECOV_TOKEN }}
         fail_ci_if_error: true

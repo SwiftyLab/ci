@@ -20,23 +20,14 @@ const doccarchiveCommand = (product) => `swift package --verbose generate-docume
 
 core.startGroup(`Building documentation archive`);
 (async () => {
-  await Promise.all(
-    products.map((product) => new Promise((resolve, reject) => {
-      exec(
-        doccarchiveCommand(product), {
-          stdio: ['inherit', 'inherit', 'inherit'],
-          encoding: 'utf-8'
-        },
-        (error, stdout, stderr) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(stdout);
-          }
-        }
-      )
-   }))
-  );
+  for (const product of products) {
+    execSync(
+      doccarchiveCommand(product), {
+        stdio: ['inherit', 'inherit', 'inherit'],
+        encoding: 'utf-8'
+      }
+    );
+  }
   core.endGroup();
 
   core.startGroup(`Zipping documentation archive`);

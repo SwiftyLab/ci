@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const path = require('path');
-const process = require('process');
-const { execSync } = require('child_process');
-const archiver = require('archiver');
-const readdirGlob = require('readdir-glob');
-const core = require('@actions/core');
+import fs from 'fs';
+import path from 'path';
+import process from 'process';
+import { execSync } from 'child_process';
+import archiver from 'archiver';
+import readdirGlob from 'readdir-glob';
+import core from '@actions/core';
 
 try {
   execSync(

@@ -1,14 +1,15 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const path = require('path');
-const process = require('process');
-const archiver = require('archiver');
-const readdirGlob = require('readdir-glob');
-const { exec } = require('child_process');
-const core = require('@actions/core');
+import fs from 'fs';
+import path from 'path';
+import process from 'process';
+import archiver from 'archiver';
+import readdirGlob from 'readdir-glob';
+import { exec } from 'child_process';
+import core from '@actions/core';
+import parseArgs from 'minimist';
 
 const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-const products = require('minimist')(process.argv.slice(2))._;
+const products = parseArgs(process.argv.slice(2))._;
 const doccarchiveCommand = (product) => `swift package --verbose generate-documentation \
   --include-extended-types \
   --target ${product} \

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const { execSync } = require('child_process');
-const core = require('@actions/core');
+import fs from 'fs';
+import { execSync } from 'child_process';
+import core from '@actions/core';
 
 const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 package.podspecs.forEach((spec) => {

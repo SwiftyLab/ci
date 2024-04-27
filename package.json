@@ -1,6 +1,7 @@
 {
   "name": "swiftylab-ci",
   "version": "1.0.0",
+  "type": "module",
   "summary": "Reusable workflows and automation scripts for swift libraries.",
   "description": "Reusable workflows, custom github actions and automation scripts for swift libraries, used by SwiftyLab repositories.",
   "homepage": "https://github.com/SwiftyLab/ci",

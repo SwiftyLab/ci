@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const { execSync } = require('child_process');
-const readdirGlob = require('readdir-glob');
-const core = require('@actions/core');
-const plist = require('plist');
+import fs from 'fs';
+import { execSync } from 'child_process';
+import readdirGlob from 'readdir-glob';
+import core from '@actions/core';
+import plist from 'plist';
+import parseArgs from 'minimist';
 
-const argv = require('minimist')(process.argv.slice(2));
+const argv = parseArgs(process.argv.slice(2));
 const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 if (argv['generate-linuxmain'] == true) {
   core.startGroup(`Generating LinuxMain for swift package`);

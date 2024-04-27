@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-const { exec } = require('child_process');
-const process = require('process');
-const open = require('open');
+import { exec } from 'child_process';
+import process from 'process';
+import open from 'open';
+import parseArgs from 'minimist';
 
-const target = require('minimist')(process.argv.slice(2))._.at(0);
+const target = parseArgs(process.argv.slice(2))._.at(0);
 const child = exec(
   `swift package --verbose \
     --disable-sandbox preview-documentation \

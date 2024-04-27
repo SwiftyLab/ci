@@ -1,10 +1,11 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
-const semver = require('semver');
-const core = require('@actions/core');
-const concurrently = require('concurrently');
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
+import semver from 'semver';
+import core from '@actions/core';
+import concurrently from 'concurrently';
+import parseArgs from 'minimist';
 
 function destinations() {
   const out = execSync(
@@ -57,7 +58,7 @@ execSync(
 core.endGroup();
 
 const defaultPlatforms = ['macOS', 'iOS', 'mac-catalyst', 'tvOS', 'watchOS'];
-const argv = require('minimist')(process.argv.slice(2));
+const argv = parseArgs(process.argv.slice(2));
 const passedPlatforms = argv._;
 const platforms = passedPlatforms?.length ? passedPlatforms : defaultPlatforms;
 const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));

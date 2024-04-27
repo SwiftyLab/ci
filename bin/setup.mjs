@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-const { execSync } = require('child_process');
-const fs = require('fs-extra');
-const core = require('@actions/core');
+import { execSync } from 'child_process';
+import fs from 'fs-extra';
+import core from '@actions/core';
 
 const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 const destDir = `node_modules/${package.name}`;

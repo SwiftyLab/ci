@@ -1,10 +1,11 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const { execSync } = require('child_process');
-const readdirGlob = require('readdir-glob');
-const core = require('@actions/core');
+import fs from 'fs';
+import { execSync } from 'child_process';
+import readdirGlob from 'readdir-glob';
+import core from '@actions/core';
+import parseArgs from 'minimist';
 
-const targets = require('minimist')(process.argv.slice(2))._;
+const targets = parseArgs(process.argv.slice(2))._;
 const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 
 async function generateHostingDoc(basePath, outPath) {

@@ -1,41 +1,33 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const path = require('path');
-const process = require('process');
-const archiver = require('archiver');
-const readdirGlob = require('readdir-glob');
-const { exec } = require('child_process');
-const core = require('@actions/core');
+import fs from 'fs';
+import path from 'path';
+import process from 'process';
+import archiver from 'archiver';
+import readdirGlob from 'readdir-glob';
+import { execSync } from 'child_process';
+import core from '@actions/core';
+import parseArgs from 'minimist';
 
-const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-const products = require('minimist')(process.argv.slice(2))._;
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+const products = parseArgs(process.argv.slice(2))._;
 const doccarchiveCommand = (product) => `swift package --verbose generate-documentation \
   --include-extended-types \
   --target ${product} \
   --fallback-display-name ${product} \
   --fallback-bundle-identifier com.SwiftyLab.${product} \
-  --fallback-bundle-version ${package.version} \
+  --fallback-bundle-version ${pkg.version} \
   --additional-symbol-graph-dir .build`;
 
 core.startGroup(`Building documentation archive`);
 (async () => {
-  await Promise.all(
-    products.map((product) => new Promise((resolve, reject) => {
-      exec(
-        doccarchiveCommand(product), {
-          stdio: ['inherit', 'inherit', 'inherit'],
-          encoding: 'utf-8'
-        },
-        (error, stdout, stderr) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(stdout);
-          }
-        }
-      )
-   }))
-  );
+  for (const product of products) {
+    execSync(
+      doccarchiveCommand(product), {
+        stdio: ['inherit', 'inherit', 'inherit'],
+        encoding: 'utf-8'
+      }
+    );
+  }
   core.endGroup();
 
   core.startGroup(`Zipping documentation archive`);
@@ -52,7 +44,7 @@ core.startGroup(`Building documentation archive`);
   doccGlobberer.on(
     'end',
     () => {
-      const archiveName = [package.name, package.version].join('-');
+      const archiveName = [pkg.name, pkg.version].join('-');
       const output = fs.createWriteStream(`${archiveName}-doccarchive.zip`);
       archive.pipe(output);
       archive.finalize();

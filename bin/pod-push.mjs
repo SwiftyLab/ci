@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const { execSync } = require('child_process');
-const core = require('@actions/core');
+import fs from 'fs';
+import { execSync } from 'child_process';
+import core from '@actions/core';
 
-const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-package.podspecs.forEach((spec) => {
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+pkg.podspecs.forEach((spec) => {
   core.startGroup(`Pushing ${spec} to CocoapPods trunk`);
   execSync(`pod trunk push --allow-warnings --synchronous --skip-tests --verbose ${spec}`, {
       stdio: ['inherit', 'inherit', 'inherit'],

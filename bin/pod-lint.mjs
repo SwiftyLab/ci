@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-const core = require('@actions/core');
-const readdirGlob = require('readdir-glob');
-const concurrently = require('concurrently');
+import core from '@actions/core';
+import readdirGlob from 'readdir-glob';
+import concurrently from 'concurrently';
+import parseArgs from 'minimist';
 
 let podspecs = [];
 const specGlobberer = readdirGlob('.', { pattern: '*.podspec' });
@@ -20,7 +21,7 @@ specGlobberer.on(
       --include-podspecs=\\{${podspecs.join(',')}\\}`;
 
     const defaultPlatforms = ['macos', 'ios', 'tvos', 'watchos'];
-    const passedPlatforms = require('minimist')(process.argv.slice(2))._;
+    const passedPlatforms = parseArgs(process.argv.slice(2))._;
     const platforms = passedPlatforms?.length ? passedPlatforms : defaultPlatforms;
     const inputs = platforms
     .map((platform) => {

@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const path = require('path');
-const process = require('process');
-const { execSync } = require('child_process');
-const archiver = require('archiver');
-const readdirGlob = require('readdir-glob');
-const core = require('@actions/core');
+import fs from 'fs';
+import path from 'path';
+import process from 'process';
+import { execSync } from 'child_process';
+import archiver from 'archiver';
+import readdirGlob from 'readdir-glob';
+import core from '@actions/core';
 
 try {
   execSync(
@@ -43,7 +43,7 @@ archive.file('package.json');
 archive.file('LICENSE');
 archive.directory('Helpers', '.');
 
-const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 const xcframeworkGlobberer = readdirGlob('.', { pattern: 'Carthage/Build/*.xcframework' });
 xcframeworkGlobberer.on(
   'match',
@@ -58,7 +58,7 @@ xcframeworkGlobberer.on(
 xcframeworkGlobberer.on(
   'end',
   () => {
-    const archiveName = [package.name, package.version].join('-');
+    const archiveName = [pkg.name, pkg.version].join('-');
     const output = fs.createWriteStream(`${archiveName}.xcframework.zip`);
     archive.pipe(output);
     archive.finalize();

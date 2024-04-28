@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-const process = require('process');
-const { execSync } = require('child_process');
-const core = require('@actions/core');
+import process from 'process';
+import { execSync } from 'child_process';
+import core from '@actions/core';
 
 const args = process.argv.slice(2).join(' ');
 const command = `swift build ${args} --verbose \

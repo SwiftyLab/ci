@@ -7,7 +7,7 @@ import plist from 'plist';
 import parseArgs from 'minimist';
 
 const argv = parseArgs(process.argv.slice(2));
-const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 if (argv['generate-linuxmain'] == true) {
   core.startGroup(`Generating LinuxMain for swift package`);
   execSync(
@@ -21,7 +21,7 @@ if (argv['generate-linuxmain'] == true) {
 
 core.startGroup(`Generating Xcode project for swift package`);
 const xcodegenCmd = `swift package --verbose generate-xcodeproj \
---xcconfig-overrides Helpers/${package.name}.xcconfig \
+--xcconfig-overrides Helpers/${pkg.name}.xcconfig \
 --skip-extra-files`;
 
 core.info(`Running command: ${xcodegenCmd}`);
@@ -35,7 +35,7 @@ core.endGroup();
 
 core.startGroup(`Adding documentation catalogue to Xcode project`);
 const rubyCommand = `"require 'xcodeproj'
-project = Xcodeproj::Project.open('${package.name}.xcodeproj')
+project = Xcodeproj::Project.open('${pkg.name}.xcodeproj')
 project_changed = false
 project.native_targets.each do |target|
   group = project[\\"Sources/#{target.name}\\"]
@@ -56,15 +56,15 @@ execSync(
 );
 core.endGroup();
 
-core.startGroup(`Updating version to ${package.version} in plist`);
-const plistGlobberer = readdirGlob('.', { pattern: `${package.name}.xcodeproj/*.plist` });
+core.startGroup(`Updating version to ${pkg.version} in plist`);
+const plistGlobberer = readdirGlob('.', { pattern: `${pkg.name}.xcodeproj/*.plist` });
 plistGlobberer.on(
   'match',
   m => {
     const buffer = plist.parse(fs.readFileSync(m.absolute, 'utf8'));
     const props = JSON.parse(JSON.stringify(buffer));
-    // props.CFBundleVersion = package.version;
-    props.CFBundleShortVersionString = package.version;
+    // props.CFBundleVersion = pkg.version;
+    props.CFBundleShortVersionString = pkg.version;
     fs.writeFileSync(m.absolute, plist.build(props));
     core.endGroup();
   }

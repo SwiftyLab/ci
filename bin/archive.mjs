@@ -43,7 +43,7 @@ archive.file('package.json');
 archive.file('LICENSE');
 archive.directory('Helpers', '.');
 
-const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 const xcframeworkGlobberer = readdirGlob('.', { pattern: 'Carthage/Build/*.xcframework' });
 xcframeworkGlobberer.on(
   'match',
@@ -58,7 +58,7 @@ xcframeworkGlobberer.on(
 xcframeworkGlobberer.on(
   'end',
   () => {
-    const archiveName = [package.name, package.version].join('-');
+    const archiveName = [pkg.name, pkg.version].join('-');
     const output = fs.createWriteStream(`${archiveName}.xcframework.zip`);
     archive.pipe(output);
     archive.finalize();

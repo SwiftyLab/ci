@@ -6,7 +6,7 @@ import core from '@actions/core';
 import parseArgs from 'minimist';
 
 const targets = parseArgs(process.argv.slice(2))._;
-const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 
 async function generateHostingDoc(basePath, outPath) {
   const hostingDocGenCommand = (target) =>
@@ -46,9 +46,9 @@ fs.mkdirSync('.docc-build', { recursive: true });
 
 (async () => {
   core.startGroup(`Generating Documentation for Hosting Online`);
-  await generateHostingDoc(`${package.name}`, '.docc-build');
+  await generateHostingDoc(`${pkg.name}`, '.docc-build');
   core.endGroup();
-  core.startGroup(`Generating ${package.version} Specific Documentation for Hosting Online`);
-  await generateHostingDoc(`${package.name}/${package.version}`, `.docc-build/${package.version}`);
+  core.startGroup(`Generating ${pkg.version} Specific Documentation for Hosting Online`);
+  await generateHostingDoc(`${pkg.name}/${pkg.version}`, `.docc-build/${pkg.version}`);
   core.endGroup();
 })();

@@ -55,7 +55,7 @@ jobs:
 
     - name: Update GitHub Pages
       if: steps.precondition.outputs.proceed == 'true' && steps.check_version_bump.outputs.release_type == ''
-      uses: JamesIves/github-pages-deploy-action@v4.5.0
+      uses: JamesIves/github-pages-deploy-action@v4.6.0
       with:
           branch: gh-pages
           folder: .docc-build

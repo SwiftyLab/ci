@@ -5,19 +5,9 @@ inputs:
     description: Swift version to use
     required: false
     default: latest
-  xcode:
-    description: Xcode version to use
-    required: false
-    default: latest-stable
 runs:
   using: composite
   steps:
-    - name: Setup Xcode version
-      if: runner.os == 'macOS'
-      uses: maxim-lobanov/setup-xcode@v1.4.1
-      with:
-        xcode-version: ${{ inputs.xcode }}
-
     - name: Setup Cocoapods
       if: runner.os == 'macOS'
       uses: maxim-lobanov/setup-cocoapods@v1
@@ -25,7 +15,6 @@ runs:
         version: latest
 
     - name: Setup swift
-      if: inputs.swift != '' && (inputs.swift != 'latest' || runner.os != 'macOS')
       uses: SwiftyLab/setup-swift@latest
       with:
         swift-version: ${{ inputs.swift }}

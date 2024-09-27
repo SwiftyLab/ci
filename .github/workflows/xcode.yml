@@ -8,8 +8,8 @@ on:
         required: false
         type: string
         default: macos-latest
-      xcode:
-        description: Xcode version to use
+      swift:
+        description: Swift version to use
         required: false
         type: string
         default: latest-stable
@@ -43,7 +43,7 @@ jobs:
       if: steps.precondition.outputs.proceed == 'true'
       uses: SwiftyLab/ci/actions/setup@main
       with:
-        xcode: ${{ inputs.xcode }}
+        swift: ${{ inputs.swift }}
 
     - name: Build with Xcode
       if: steps.precondition.outputs.proceed == 'true'

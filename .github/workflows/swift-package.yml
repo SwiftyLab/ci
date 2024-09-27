@@ -41,7 +41,6 @@ jobs:
       uses: SwiftyLab/ci/actions/setup@main
       with:
         swift: ${{ matrix.swift }}
-        xcode: ${{ matrix.xcode }}
 
     - name: Run tests
       if: steps.precondition.outputs.proceed == 'true'

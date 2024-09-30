@@ -67,6 +67,8 @@ jobs:
 
     - name: Setup repository
       uses: SwiftyLab/ci/actions/setup@main
+      with:
+        swift: ${{ inputs.swift }}
 
     - name: Build package products and documentation
       run: |

@@ -103,7 +103,6 @@ jobs:
         COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
       with:
         script: |
-          const exec = require('@actions/exec');
           const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
           const pushArgs = [
             'trunk', 'push', '--skip-import-validation', '--skip-tests', '--allow-warnings', '--verbose'

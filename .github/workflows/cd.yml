@@ -95,12 +95,24 @@ jobs:
         artifacts: '*.zip'
 
     - name: Publish to CocoaPods trunk
+      uses: actions/github-script@v6.1.0
       continue-on-error: true
-      run: |
-        set -eo pipefail
-        pod trunk push --skip-import-validation --skip-tests --allow-warnings
       env:
         COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+      with:
+        script: |
+          const exec = require('@actions/exec');
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          const pushArgs = [
+            'trunk', 'push', '--skip-import-validation', '--skip-tests', '--allow-warnings', '--verbose'
+          ];
+          if (pkg.pods) {
+            pkg.pods.forEach(async (pod) => {
+              await  exec.exec('pod', [...pushArgs, '--synchronous', pod]);
+            });
+          } else {
+            await exec.exec('pod', pushArgs);
+          }
 
     - name: Publish to Swift Package Registry
       continue-on-error: true

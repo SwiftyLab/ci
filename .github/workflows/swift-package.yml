@@ -55,6 +55,7 @@ jobs:
           const { execSync } = require('child_process');
           const { PACKAGES } = process.env;
           const packages = JSON.parse(PACKAGES);
+          execSync(`swift package resolve`);
           for (const [package, version] of Object.entries(packages)) {
             core.startGroup(`Resolving ${package} to ${version}`);
             execSync(`swift package resolve ${package} --version ${version}`);

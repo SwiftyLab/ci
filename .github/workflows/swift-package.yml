@@ -42,6 +42,23 @@ jobs:
       with:
         swift: ${{ matrix.swift }}
 
+    - name: Resolve packages
+      if: matrix.dependencies != ''
+      id: resolve_packages
+      uses: actions/github-script@v6.1.0
+      env:
+        PACKAGES: ${{ toJSON(matrix.dependencies) }}
+      with:
+        script: |
+          const { execSync } = require('child_process');
+          const { PACKAGES } = process.env;
+          const packages = JSON.parse(PACKAGES);
+          for (const [package, version] of Object.entries(packages)) {
+            core.startGroup(`Resolving ${name} to ${version}`);
+            execSync(`swift package resolve ${name} --version ${version}`);
+            core.endGroup();
+          }
+
     - name: Run tests
       if: steps.precondition.outputs.proceed == 'true'
       run: npm run test

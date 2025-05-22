@@ -21,7 +21,7 @@ on:
 
 jobs:
   swift-package:
-    name: Run tests on ${{ matrix.os }} with swift version ${{ matrix.swift }}
+    name: Run tests on ${{ matrix.os }} with swift version ${{ matrix.swift }} dependencies ${{ matrix.dependencies != '' && toJSON(matrix.dependencies) }}
     runs-on: ${{ matrix.os }}
     continue-on-error: true
     defaults:
@@ -56,8 +56,8 @@ jobs:
           const { PACKAGES } = process.env;
           const packages = JSON.parse(PACKAGES);
           for (const [package, version] of Object.entries(packages)) {
-            core.startGroup(`Resolving ${name} to ${version}`);
-            execSync(`swift package resolve ${name} --version ${version}`);
+            core.startGroup(`Resolving ${package} to ${version}`);
+            execSync(`swift package resolve ${package} --version ${version}`);
             core.endGroup();
           }
 

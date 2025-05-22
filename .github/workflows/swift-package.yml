@@ -23,12 +23,10 @@ jobs:
   swift-package:
     name: Run tests on ${{ matrix.os }} with swift version ${{ matrix.swift }} dependencies ${{ matrix.dependencies != '' && toJSON(matrix.dependencies) }}
     runs-on: ${{ matrix.os }}
-    continue-on-error: true
     defaults:
       run:
         shell: bash
     strategy:
-      fail-fast: false
       matrix: ${{ fromJSON(inputs.matrix) }}
 
     steps:

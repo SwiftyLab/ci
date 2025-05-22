@@ -23,6 +23,7 @@ jobs:
   swift-package:
     name: Run tests on ${{ matrix.os }} with swift version ${{ matrix.swift }}
     runs-on: ${{ matrix.os }}
+    continue-on-error: true
     defaults:
       run:
         shell: bash

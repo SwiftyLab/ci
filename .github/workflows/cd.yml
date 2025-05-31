@@ -79,7 +79,7 @@ jobs:
 
     - name: Release GitHub Pages
       continue-on-error: true
-      uses: JamesIves/github-pages-deploy-action@v4.6.1
+      uses: JamesIves/github-pages-deploy-action@v4.7.1
       with:
           branch: gh-pages
           folder: .docc-build

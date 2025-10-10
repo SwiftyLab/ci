@@ -4,7 +4,7 @@ import { execSync } from 'child_process';
 import core from '@actions/core';
 
 const args = process.argv.slice(2).join(' ');
-const command = `swift build ${args} --verbose \
+const command = `swift build ${args} --disable-experimental-prebuilts --verbose \
   -Xswiftc \
   -emit-symbol-graph \
   -Xswiftc \

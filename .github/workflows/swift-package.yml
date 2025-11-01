@@ -45,7 +45,7 @@ jobs:
     - name: Resolve packages
       if: matrix.dependencies != ''
       id: resolve_packages
-      uses: actions/github-script@v6.1.0
+      uses: actions/github-script@v8.0.0
       env:
         PACKAGES: ${{ toJSON(matrix.dependencies) }}
       with:

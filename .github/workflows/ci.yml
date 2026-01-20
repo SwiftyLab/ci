@@ -50,7 +50,7 @@ jobs:
     - name: Build package documentation
       if: steps.precondition.outputs.proceed == 'true' && steps.check_version_bump.outputs.release_type == ''
       run: |
-        swift build -Xswiftc -emit-symbol-graph -Xswiftc -emit-symbol-graph-dir -Xswiftc .build
+        swift build --disable-experimental-prebuilts -Xswiftc -emit-symbol-graph -Xswiftc -emit-symbol-graph-dir -Xswiftc .build
         npm run serve-doc
 
     - name: Update GitHub Pages

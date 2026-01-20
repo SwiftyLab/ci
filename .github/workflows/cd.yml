@@ -72,7 +72,7 @@ jobs:
 
     - name: Build package products and documentation
       run: |
-        swift build -Xswiftc -emit-symbol-graph -Xswiftc -emit-extension-block-symbols -Xswiftc -emit-symbol-graph-dir -Xswiftc .build
+        swift build --disable-experimental-prebuilts -Xswiftc -emit-symbol-graph -Xswiftc -emit-extension-block-symbols -Xswiftc -emit-symbol-graph-dir -Xswiftc .build
         npm run build-doc
         npm run serve-doc
         npm run archive

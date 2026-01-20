@@ -50,7 +50,7 @@ jobs:
         source-root: ${{ inputs.source-root }}
 
     - name: Build package products
-      run: swift build --build-tests
+      run: swift build --disable-experimental-prebuilts --build-tests
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4

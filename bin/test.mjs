@@ -4,7 +4,7 @@ import { execSync } from 'child_process';
 import core from '@actions/core';
 
 const args = process.argv.slice(2).join(' ');
-const command = `swift test ${args} --verbose \
+const command = `swift test ${args} --disable-experimental-prebuilts --verbose \
   --enable-code-coverage \
   --enable-test-discovery`;
 

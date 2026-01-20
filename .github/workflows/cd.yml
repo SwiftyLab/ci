@@ -103,14 +103,15 @@ jobs:
         COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
       with:
         script: |
+          const fs = require('fs');
           const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
           const pushArgs = [
             'trunk', 'push', '--skip-import-validation', '--skip-tests', '--allow-warnings', '--verbose'
           ];
           if (pkg.pods) {
-            pkg.pods.forEach(async (pod) => {
-              await  exec.exec('pod', [...pushArgs, '--synchronous', pod]);
-            });
+            for (const pod of pkg.pods) {
+              await exec.exec('pod', [...pushArgs, '--synchronous', `${pod}.podspec`]);
+            }
           } else {
             await exec.exec('pod', pushArgs);
           }

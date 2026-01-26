@@ -11,7 +11,7 @@ const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 if (argv['generate-linuxmain'] == true) {
   core.startGroup(`Generating LinuxMain for swift package`);
   execSync(
-    `swift test --disable-experimental-prebuilts --verbose --generate-linuxmain`, {
+    `swift test --verbose --generate-linuxmain`, {
       stdio: ['inherit', 'inherit', 'inherit'],
       encoding: 'utf-8'
     }

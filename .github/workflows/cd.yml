@@ -118,4 +118,4 @@ jobs:
 
     - name: Publish to Swift Package Registry
       continue-on-error: true
-      uses: twodayslate/swift-package-registry@v0.0.2
+      uses: twodayslate/swift-package-registry@v24
